@@ -1,74 +1,55 @@
-# defmodule PI do
-#   def estimate(num_points) when is_integer(num_points) and num_points > 0 do
-#     {time_microseconds, result} = :timer.tc(fn ->
-#       inside_circle = Enum.count(1..num_points, fn _ ->
-#         x = :rand.uniform()
-#         y = :rand.uniform()
-#         x * x + y * y <= 1.0
-#       end)
-#       estimated_pi = 4.0 * inside_circle / num_points
-#       estimated_pi
-#     end)
+defmodule Randomize do
+  def start do
+    pid = spawn(__MODULE__, :loop, [])
+    pid
+  end
 
-#     time_seconds = time_microseconds / 1_000_000.0
+  def loop do
+    receive do
+      {sender} ->
+        x = :rand.uniform()
+        y = :rand.uniform()
 
-#     IO.puts("Estimated π with #{num_points} points: #{result}")
-#     IO.puts("Time taken: #{time_seconds} seconds")
-#     result
-#   end
-# end
+        is_inside = x * x + y * y <= 1.0
 
-defmodule RandomXY do
-
-
+        send(sender, {is_inside})
+        loop()
+    end
+  end
 end
 
 defmodule PI do
-  def estimate(num_points) when is_integer(num_points) and num_points > 0 do
-    {time_microseconds, result} = :timer.tc(fn ->
-      inside_circle = Enum.count(1..num_points, fn _ ->
-        generate_xy()
-      end)
-      estimated_pi = 4.0 * inside_circle / num_points
-      estimated_pi
-    end)
-
-    time_seconds = time_microseconds / 1_000_000.0
-
-    IO.puts("Estimated π with #{num_points} points: #{result}")
-    IO.puts("Time taken: #{time_seconds} seconds")
-
-    result
+  def start(total_points) do
+    pid = spawn(__MODULE__, :estimate, [total_points, total_points, 0])
+    pid
   end
 
-  def generate_xy() do
-    x = :rand.uniform()
-    y = :rand.uniform()
+  def estimate(total_points, 0, inside_circle) do
+    estimated_pi = 4.0 * inside_circle / total_points
+    IO.puts("Valor estimado de PI para #{total_points} foi #{estimated_pi}")
+  end
 
-    x * x + y * y <= 1.0
+  def estimate(total_points, num_points, inside_circle) do
+    actor_pid = Randomize.start()
+
+    send(actor_pid, {self()})
+    receive do
+      {true} ->
+        estimate(total_points, num_points - 1, inside_circle + 1)
+      {false} ->
+        estimate(total_points, num_points - 1, inside_circle)
+    end
   end
 end
 
-pid = spawn fn ->
-  receive do
-    {sender, :ping} ->
-      IO.puts "Got ping"
-      send sender, :pong
-  end
-end
+PI.start(1_000)
+# not working for values over 5k
 
-send pid, {self(), :ping}
-
-# Got ping
-
-receive do
-  message -> IO.puts "Got #{message} back"
-end
-
-PI.estimate(1_000)
-# PI.estimate(10_000)
-# PI.estimate(100_000)
-# PI.estimate(1_000_000)
-# PI.estimate(10_000_000)
-# PI.estimate(100_000_000)
-# PI.estimate(1_000_000_000)
+# pi = PI.start(1_000)
+# Process.exit(pi, :normal)
+# pi = PI.start(10_000)
+# PI.start(100_000)
+# PI.start(1_000_000)
+# PI.start(10_000_000)
+# PI.start(100_000_000)
+# PI.start(1_000_000_000)
