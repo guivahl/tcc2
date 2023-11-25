@@ -26,7 +26,7 @@ defmodule PI do
     pid
   end
 
-  def estimate(total_points, 0, receiver_pid) do :ok
+  def estimate(total_points, 0, _) do :ok
   end
 
   def estimate(total_points, num_points, receiver_pid) do
@@ -50,8 +50,6 @@ defmodule PI do
         receiver(points_inside_circle + 1, count + 1, total_points, parent_pid)
       {false} ->
         receiver(points_inside_circle, count + 1, total_points, parent_pid)
-      {sender, :finish} ->
-        send(sender, points_inside_circle)
     end
   end
 end
