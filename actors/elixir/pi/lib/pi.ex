@@ -6,60 +6,60 @@ defmodule Randomize do
 
   def calculate do
     receive do
-      {sender} ->
-        # Process.sleep(500)
-        x = :rand.uniform()
-        y = :rand.uniform()
+      {sender, iterations} ->
+        {inside_count} =
+          Enum.reduce(1..iterations, {0}, fn _, {count} ->
+            x = :rand.uniform()
+            y = :rand.uniform()
+            is_inside = x * x + y * y <= 1.0
 
-        is_inside = (x * x + y * y) <= 1.0
-        # IO.puts("Esta dentro do circulo: #{is_inside}...")
+            sum_value = if is_inside, do: 1, else: 0
 
-        send(sender, {is_inside})
+            {count + sum_value}
+          end)
+
+        # IO.puts("Quantidade dentro do circulo: #{inside_count} para #{iterations} iteracoes")
+        send(sender, {inside_count})
     end
   end
 end
 
 defmodule PI do
-  def start(total_points, parent_pid) do
-    receiver_pid = spawn(__MODULE__, :receiver, [0, 1, total_points, parent_pid])
-    pid = spawn(__MODULE__, :estimate, [total_points, total_points, receiver_pid])
+  def start(total_points, num_actors, parent_pid) do
+    if num_actors > total_points do
+      raise("Numero de pontos deve ser maior que numero de atores")
+    end
+
+    points_per_actor = trunc(total_points / num_actors)
+
+    receiver_pid = spawn(__MODULE__, :receiver, [0, 0, num_actors, total_points, parent_pid])
+
+    pid = spawn(__MODULE__, :estimate, [points_per_actor, num_actors, receiver_pid])
     pid
   end
 
-  def estimate(total_points, 0, _) do :ok
+  def estimate(_, 0, _) do :ok
   end
 
-  def estimate(total_points, num_points, receiver_pid) do
+  def estimate(points, num_actors, receiver_pid) do
     actor_pid = Randomize.start()
 
-    send(actor_pid, {receiver_pid})
-    # IO.puts("Enviando mensagem: #{num_points}...")
+    send(actor_pid, {receiver_pid, points})
 
-    estimate(total_points, num_points - 1, receiver_pid)
+    estimate(points, num_actors - 1, receiver_pid)
   end
 
-  def receiver(points_inside_circle, count, total_points, parent_pid) when count == total_points do
+  def receiver(points_inside_circle, count, num_actors, total_points, parent_pid) when (count) == num_actors do
+    IO.puts("Total dentro do circulo: #{points_inside_circle} para #{num_actors} atores")
     estimated_pi = 4.0 * points_inside_circle / total_points
 
     send(parent_pid, {:finish, estimated_pi})
   end
 
-  def receiver(points_inside_circle, count, total_points, parent_pid) do
+  def receiver(points_inside_circle, count, num_actors, total_points, parent_pid) do
     receive do
-      {true} ->
-        receiver(points_inside_circle + 1, count + 1, total_points, parent_pid)
-      {false} ->
-        receiver(points_inside_circle, count + 1, total_points, parent_pid)
+      {inside_count} ->
+        receiver(points_inside_circle + inside_count, count + 1, num_actors, total_points, parent_pid)
     end
   end
-end
-
-total_points = 1_000_000
-parent_pid = self()
-
-PI.start(total_points, parent_pid)
-
-receive do
-  {:finish, estimated_pi} ->
-    IO.puts("Valor estimado de PI para #{total_points} foi #{estimated_pi}")
 end
