@@ -1,9 +1,11 @@
-total_points = 1_000
-num_actors = 1_000
+default_total_points = 1_000
+default_num_actors = 1_000
 
 args = System.argv()
+has_args = length(args) == 2
 
-# todo: pass total points and num actors as args
+total_points = if has_args, do: String.to_integer(Enum.at(args, 0)), else: default_total_points
+num_actors = if has_args, do: String.to_integer(Enum.at(args, 1)), else: default_num_actors
 
 parent_pid = self()
 

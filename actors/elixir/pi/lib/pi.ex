@@ -34,7 +34,18 @@ defmodule PI do
 
     receiver_pid = spawn(__MODULE__, :receiver, [0, 0, num_actors, total_points, parent_pid])
 
+    # IO.puts("Total atores: #{num_actors}.")
+    # IO.puts("Cada ator calculará #{points_per_actor} pontos")
+
     pid = spawn(__MODULE__, :estimate, [points_per_actor, num_actors, receiver_pid])
+
+    rest = rem(total_points, num_actors)
+
+    if (rest != 0) do
+      # IO.puts("Ator restante: #{rest} iteracoes")
+      spawn(__MODULE__, :estimate, [rest, 1, receiver_pid])
+    end
+
     pid
   end
 
