@@ -1,4 +1,4 @@
-package pi;
+package pi.actors;
 
 import java.util.Random;
 
