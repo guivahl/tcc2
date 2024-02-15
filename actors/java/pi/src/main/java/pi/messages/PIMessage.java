@@ -1,19 +1,19 @@
 package pi.messages;
 
 public class PIMessage implements IMessage {
-    private int iterations;
-    private int numActors;
+    private long iterations;
+    private long numActors;
 
-    public PIMessage(int iterations, int numActors) {
-        this.iterations = iterations;
+    public PIMessage(long totalIterations, long numActors) {
+        this.iterations = totalIterations;
         this.numActors = numActors;
     }
 
-    public int getIterations() {
+    public long getIterations() {
         return this.iterations;
     }
 
-    public int getNumActors() {
+    public long getNumActors() {
         return this.numActors;
     }
 

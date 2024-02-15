@@ -3,10 +3,10 @@ package pi.messages;
 import akka.actor.typed.ActorRef;
 
 public class CalculationRequestMessage implements IMessage {
-    private int iterations;
+    private long iterations;
     private ActorRef<IMessage> sender;
 
-    public CalculationRequestMessage(int iterations, ActorRef<IMessage> actorRef) {
+    public CalculationRequestMessage(long iterations, ActorRef<IMessage> actorRef) {
         this.iterations = iterations;
         this.sender = actorRef;
     }
@@ -15,7 +15,7 @@ public class CalculationRequestMessage implements IMessage {
         return this.sender;
     }
 
-    public int getIterations() {
+    public long getIterations() {
         return this.iterations;
     }
 }

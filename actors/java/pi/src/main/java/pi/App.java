@@ -9,8 +9,8 @@ public class App
 {
     public static void main( String[] args )
     {
-        int totalIterations = 1_000;
-        int numActors = 10;
+        long totalIterations = 100_000_000L;
+        long numActors = 10L;
 
         ActorSystem<IMessage> piActor = ActorSystem.create(PI.start(), "PIActor");
 

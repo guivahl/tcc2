@@ -1,13 +1,13 @@
 package pi.messages;
 
 public class CalculationResponseMessage implements IMessage {
-    private int isInsideCounter;
+    private long isInsideCounter;
 
-    public CalculationResponseMessage(int isInsideCounter) {
+    public CalculationResponseMessage(long isInsideCounter) {
         this.isInsideCounter = isInsideCounter;
     }
 
-    public int getIsInsideCounter() {
+    public long getIsInsideCounter() {
         return this.isInsideCounter;
     }
 }

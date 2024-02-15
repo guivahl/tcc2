@@ -24,11 +24,11 @@ public class Randomize extends AbstractBehavior<CalculationRequestMessage> {
     }
 
     private Behavior<CalculationRequestMessage> calculate(CalculationRequestMessage message) {
-        int isInsideCounter = 0;
+        long isInsideCounter = 0;
 
         Random random = new Random();
 
-        for (int i = 0; i < message.getIterations(); i++) {
+        for (long i = 0; i < message.getIterations(); i++) {
             double x = random.nextDouble();
             double y = random.nextDouble();
             boolean isInside = x * x + y * y <= 1.0;
