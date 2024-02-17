@@ -39,12 +39,6 @@ defmodule PI do
 
     pid = spawn(__MODULE__, :estimate, [points_per_actor, num_actors, receiver_pid])
 
-    rest = rem(total_points, num_actors)
-
-    if (rest != 0) do
-      # IO.puts("Ator restante: #{rest} iteracoes")
-      spawn(__MODULE__, :estimate, [rest, 1, receiver_pid])
-    end
 
     pid
   end
@@ -61,10 +55,12 @@ defmodule PI do
   end
 
   def receiver(points_inside_circle, count, num_actors, total_points, parent_pid) when (count) == num_actors do
-    IO.puts("Total dentro do circulo: #{points_inside_circle} para #{num_actors} atores")
+    # IO.puts("Total dentro do circulo: #{points_inside_circle} para #{num_actors} atores")
     estimated_pi = 4.0 * points_inside_circle / total_points
 
-    send(parent_pid, {:finish, estimated_pi})
+    # IO.puts("Valor estimado de PI para #{total_points} foi #{estimated_pi}")
+
+    send(parent_pid, {:finish, total_points, points_inside_circle, num_actors, estimated_pi})
   end
 
   def receiver(points_inside_circle, count, num_actors, total_points, parent_pid) do

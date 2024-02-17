@@ -2,7 +2,23 @@
 
 ## Run
 
-```elixir
+### Benchmark
+
+```sh
+mix compile
+```
+
+```sh
+chmod +x benchmark-1m.sh benchmark-100m.sh
+```
+
+```sh
+./benchmark-1m.sh && ./benchmark-100m.sh
+```
+
+### One test case
+
+```sh
 mix run lib/main.ex 10000 300
 ```
 
