@@ -1,1 +1,1 @@
-rm output_images/**.png
+rm outputImages/**.png
