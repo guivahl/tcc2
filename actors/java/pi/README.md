@@ -1,8 +1,5 @@
 Compile: mvn compile -q
 Run: mvn exec:exec -q 
-Compile & Run: mvn compile exec:exec -q
-
-java -cp target/my-app-1.0-SNAPSHOT.jar com.mycompany.app.App
 
 # Pi
 

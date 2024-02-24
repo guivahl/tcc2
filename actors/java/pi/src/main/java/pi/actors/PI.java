@@ -17,6 +17,7 @@ import akka.actor.typed.javadsl.AbstractBehavior;
 import akka.actor.typed.javadsl.ActorContext;
 import akka.actor.typed.javadsl.Behaviors;
 import akka.actor.typed.javadsl.Receive;
+import pi.App;
 import pi.messages.CalculationRequestMessage;
 import pi.messages.CalculationResponseMessage;
 import pi.messages.IMessage;
@@ -32,7 +33,6 @@ public class PI extends AbstractBehavior<IMessage> {
 
     public PI(ActorContext<IMessage> context) {
         super(context);
-        this.startTime = Instant.now();
     }
 
     @Override
@@ -69,24 +69,25 @@ public class PI extends AbstractBehavior<IMessage> {
             double piDiff = Math.abs(estimatedPi - Math.PI);
             Instant stopTime = Instant.now();
 
-            long timeExecutionMiliseconds = Duration.between(this.startTime, stopTime).toMillis();
+            long timeExecutionMiliseconds = Duration.between(App.startTime, stopTime).toMillis();
 
-            String csvString = String.format("%d,%d,%d,%d,%f,%f,%f,%d\n", 
-                                            this.totalIterations, 
-                                            this.numActors,
-                                            this.pointsPerActor, 
-                                            this.isInsideCounter,
-                                            estimatedPi,
-                                            Math.PI,
-                                            piDiff,
-                                            timeExecutionMiliseconds
-                                            );
+            String csvString = String.format(
+                "%d,%d,%d,%d,%f,%f,%f,%d\n", 
+                this.totalIterations, 
+                this.numActors,
+                this.pointsPerActor, 
+                this.isInsideCounter,
+                estimatedPi,
+                Math.PI,
+                piDiff,
+                timeExecutionMiliseconds
+            );
 
             try{
                 Path path = Paths.get("results.csv");
                 Files.write(path, csvString.getBytes(), StandardOpenOption.APPEND);
-            } catch(Exception ex) {
-                System.out.println("Erro ao escrever resultados no csv");
+            } catch(Exception e) {
+                System.out.println("Error: " + e.toString());
             }
 
             return Behaviors.stopped();
@@ -96,7 +97,7 @@ public class PI extends AbstractBehavior<IMessage> {
     }
 
 
-    public static Behavior<IMessage> start() {
+    public static Behavior<IMessage> start(Instant startTime) {
         return Behaviors.setup(PI::new);
     }
 }

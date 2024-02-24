@@ -1,3 +1,5 @@
+File.mkdir_p!(Path.dirname("tmp"))
+
 initial_time = Time.utc_now()
 parent_pid = self()
 

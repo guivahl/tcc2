@@ -15,7 +15,6 @@ PI.start(total_points, num_actors, parent_pid)
 
 receive do
   {:finish, total_points, points_inside_circle, num_actors, estimated_pi} ->
-    IO.puts("Valor estimado de PI para #{total_points} foi #{estimated_pi}")
 
     finish_time = Time.utc_now()
     time_execution = Time.diff(finish_time, initial_time, :millisecond)
