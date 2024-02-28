@@ -24,8 +24,8 @@ public class App
 
         String inputPath = "image.png";
 
-        int splitWidth = 5;
-        int splitHeight = 2;
+        int splitWidth = 4;
+        int splitHeight = 4;
 
         if (args.length == 2) {        
             splitWidth = Integer.parseInt(args[0]);

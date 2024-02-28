@@ -1,3 +1,5 @@
+alias PI
+
 default_total_points = 1_000
 default_num_actors = 1_000
 
@@ -10,6 +12,8 @@ num_actors = if has_args, do: String.to_integer(Enum.at(args, 1)), else: default
 parent_pid = self()
 
 initial_time = Time.utc_now()
+
+spawn(PI, :start, [total_points, num_actors, parent_pid])
 
 PI.start(total_points, num_actors, parent_pid)
 

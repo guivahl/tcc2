@@ -7,12 +7,12 @@ import akka.actor.typed.javadsl.*;
 import pi.messages.CalculationRequestMessage;
 import pi.messages.CalculationResponseMessage;
 
-public class Randomize extends AbstractBehavior<CalculationRequestMessage> {
+public class MonteCarlo extends AbstractBehavior<CalculationRequestMessage> {
   public static Behavior<CalculationRequestMessage> create() {
-    return Behaviors.setup(Randomize::new);
+    return Behaviors.setup(MonteCarlo::new);
   }
 
-  public Randomize(ActorContext<CalculationRequestMessage> context) {
+  public MonteCarlo(ActorContext<CalculationRequestMessage> context) {
     super(context);
   }
 
@@ -28,7 +28,7 @@ public class Randomize extends AbstractBehavior<CalculationRequestMessage> {
 
         Random random = new Random();
 
-        for (long i = 0; i < message.getIterations(); i++) {
+        for (long i = 0; i < message.getPoints(); i++) {
             double x = random.nextDouble();
             double y = random.nextDouble();
             boolean isInside = x * x + y * y <= 1.0;
@@ -44,6 +44,6 @@ public class Randomize extends AbstractBehavior<CalculationRequestMessage> {
     }
 
     public static Behavior<CalculationRequestMessage> start() {
-        return Behaviors.setup(Randomize::new);
+        return Behaviors.setup(MonteCarlo::new);
     }
 }

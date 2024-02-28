@@ -1,4 +1,4 @@
-defmodule Randomize do
+defmodule MonteCarlo do
   def start do
     pid = spawn(__MODULE__, :calculate, [])
     pid
@@ -6,9 +6,9 @@ defmodule Randomize do
 
   def calculate do
     receive do
-      {sender, iterations} ->
+      {sender, points} ->
         {inside_count} =
-          Enum.reduce(1..iterations, {0}, fn _, {count} ->
+          Enum.reduce(1..points, {0}, fn _, {count} ->
             x = :rand.uniform()
             y = :rand.uniform()
             is_inside = x * x + y * y <= 1.0
@@ -37,17 +37,14 @@ defmodule PI do
     # IO.puts("Total atores: #{num_actors}.")
     # IO.puts("Cada ator calculará #{points_per_actor} pontos")
 
-    pid = spawn(__MODULE__, :estimate, [points_per_actor, num_actors, receiver_pid])
-
-
-    pid
+    spawn(__MODULE__, :estimate, [points_per_actor, num_actors, receiver_pid])
   end
 
   def estimate(_, 0, _) do :ok
   end
 
   def estimate(points, num_actors, receiver_pid) do
-    actor_pid = Randomize.start()
+    actor_pid = MonteCarlo.start()
 
     send(actor_pid, {receiver_pid, points})
 

@@ -24,7 +24,7 @@ public class App
              numActors = Long.parseLong(args[1]);
         }
 
-        ActorSystem<IMessage> piActor = ActorSystem.create(PI.start(startTime), "PIActor");
+        ActorSystem<IMessage> piActor = ActorSystem.create(PI.start(), "PIActor");
 
         piActor.tell(new PIMessage(totalIterations, numActors));
     }

@@ -24,12 +24,11 @@ import pi.messages.IMessage;
 import pi.messages.PIMessage;
 
 public class PI extends AbstractBehavior<IMessage> {
-    private long totalIterations;
+    private long totalPoints;
     private long numActors;
     private long messageReceivedCounter = 0;
     private long isInsideCounter = 0;
     private long pointsPerActor = 0;
-    private Instant startTime;
 
     public PI(ActorContext<IMessage> context) {
         super(context);
@@ -45,12 +44,12 @@ public class PI extends AbstractBehavior<IMessage> {
     
     private Behavior<IMessage> estimate(PIMessage message) {
         this.numActors = message.getNumActors();
-        this.totalIterations = message.getIterations();
-        this.pointsPerActor = (long) Math.floor((double)(this.totalIterations / message.getNumActors()));
+        this.totalPoints = message.getTotalPoints();
+        this.pointsPerActor = (long) Math.floor((double)(this.totalPoints / this.numActors));
         
         for (long i = 0; i < message.getNumActors(); i++) {
-            String calculationActorName = "PIActor_" + i;
-            ActorRef<CalculationRequestMessage> calculationActor = getContext().spawn(Randomize.start(), calculationActorName);
+            String calculationActorName = "MonteCarloActor_" + i;
+            ActorRef<CalculationRequestMessage> calculationActor = getContext().spawn(MonteCarlo.start(), calculationActorName);
 
             CalculationRequestMessage calculationMessage = new CalculationRequestMessage(this.pointsPerActor, getContext().getSelf());
 
@@ -65,7 +64,7 @@ public class PI extends AbstractBehavior<IMessage> {
         
 
         if (this.messageReceivedCounter == this.numActors) {
-            double estimatedPi = (4.0 * this.isInsideCounter) / this.totalIterations;
+            double estimatedPi = (4.0 * this.isInsideCounter) / this.totalPoints;
             double piDiff = Math.abs(estimatedPi - Math.PI);
             Instant stopTime = Instant.now();
 
@@ -73,7 +72,7 @@ public class PI extends AbstractBehavior<IMessage> {
 
             String csvString = String.format(
                 "%d,%d,%d,%d,%f,%f,%f,%d\n", 
-                this.totalIterations, 
+                this.totalPoints, 
                 this.numActors,
                 this.pointsPerActor, 
                 this.isInsideCounter,
@@ -96,8 +95,7 @@ public class PI extends AbstractBehavior<IMessage> {
         return this;
     }
 
-
-    public static Behavior<IMessage> start(Instant startTime) {
+    public static Behavior<IMessage> start() {
         return Behaviors.setup(PI::new);
     }
 }

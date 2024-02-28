@@ -1,21 +1,28 @@
-# ImageProcessor
+# Pi
 
-**TODO: Add description**
+## Run
 
-## Installation
+### Benchmark
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `image_processor` to your list of dependencies in `mix.exs`:
-
-```elixir
-def deps do
-  [
-    {:image_processor, "~> 0.1.0"}
-  ]
-end
+```sh
+mix deps.get && mix compile
 ```
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at <https://hexdocs.pm/image_processor>.
+```sh
+chmod +x benchmark.sh
+```
+
+```sh
+./benchmark.sh
+```
+
+### One test case
+
+```sh
+mix run lib/main.ex 5 2
+```
+
+1. First argument is the number which the image width will be splitted.
+2. Second argumentis the number which the image height will be splitted.
+3. If none of the arguments are passed, both values will be 4 by default.
 
