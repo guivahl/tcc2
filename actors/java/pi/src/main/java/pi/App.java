@@ -4,7 +4,7 @@ import java.time.Instant;
 
 import akka.actor.typed.ActorSystem;
 import akka.actor.typed.javadsl.AbstractBehavior;
-import pi.actors.PI;
+import pi.actors.*;
 import pi.messages.IMessage;
 import pi.messages.PIMessage;
 
@@ -24,7 +24,7 @@ public class App
              numActors = Long.parseLong(args[1]);
         }
 
-        ActorSystem<IMessage> piActor = ActorSystem.create(PI.start(), "PIActor");
+        ActorSystem<IMessage> piActor = ActorSystem.create(PIEstimate.start(), "PIActor");
 
         piActor.tell(new PIMessage(totalIterations, numActors));
     }

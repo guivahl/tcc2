@@ -22,7 +22,9 @@ receive do
     finish_time = Time.utc_now()
     time_execution = Time.diff(finish_time, initial_time, :millisecond)
 
-    csv_string = "#{split_width},#{split_height},#{time_execution},#{output_path}\n"
+    n_actors = split_width * split_height
+
+    csv_string = "#{n_actors},#{split_width},#{split_height},#{time_execution},#{output_path}\n"
 
     filename = "results.csv"
 

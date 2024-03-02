@@ -1,9 +1,4 @@
 defmodule MonteCarlo do
-  def start do
-    pid = spawn(__MODULE__, :calculate, [])
-    pid
-  end
-
   def calculate do
     receive do
       {sender, points} ->
@@ -18,52 +13,61 @@ defmodule MonteCarlo do
             {count + sum_value}
           end)
 
-        # IO.puts("Quantidade dentro do circulo: #{inside_count} para #{iterations} iteracoes")
         send(sender, {inside_count})
     end
   end
 end
 
 defmodule PI do
-  def start(total_points, num_actors, parent_pid) do
-    if num_actors > total_points do
-      raise("Numero de pontos deve ser maior que numero de atores")
+  def estimate(_, 0, _) do
+    receive do
+      {:finish} ->
+        :ok
     end
-
-    points_per_actor = trunc(total_points / num_actors)
-
-    receiver_pid = spawn(__MODULE__, :receiver, [0, 0, num_actors, total_points, parent_pid])
-
-    # IO.puts("Total atores: #{num_actors}.")
-    # IO.puts("Cada ator calculará #{points_per_actor} pontos")
-
-    spawn(__MODULE__, :estimate, [points_per_actor, num_actors, receiver_pid])
   end
 
-  def estimate(_, 0, _) do :ok
+  def estimate(points_per_actor, num_actors, receiver_pid) do
+    actor_pid = spawn(MonteCarlo, :calculate, [])
+
+    send(actor_pid, {receiver_pid, points_per_actor})
+
+    estimate(points_per_actor, num_actors - 1, receiver_pid)
   end
 
-  def estimate(points, num_actors, receiver_pid) do
-    actor_pid = MonteCarlo.start()
+  def estimate(points_per_actor, num_actors, total_points, initial_time) do
+    estimate_pid = self()
+    receiver_pid = spawn(__MODULE__, :receiver, [0, 0, points_per_actor, num_actors, total_points, initial_time, estimate_pid])
 
-    send(actor_pid, {receiver_pid, points})
+    actor_pid = spawn(MonteCarlo, :calculate, [])
 
-    estimate(points, num_actors - 1, receiver_pid)
+    send(actor_pid, {receiver_pid, points_per_actor})
+
+    estimate(points_per_actor, num_actors - 1, receiver_pid)
   end
 
-  def receiver(points_inside_circle, count, num_actors, total_points, parent_pid) when (count) == num_actors do
-    # IO.puts("Total dentro do circulo: #{points_inside_circle} para #{num_actors} atores")
-    estimated_pi = 4.0 * points_inside_circle / total_points
+  def receiver(points_inside_circle, count, points_per_actor, num_actors, total_points, initial_time, estimate_pid) when (count) == num_actors do
+    pi = 4.0 * points_inside_circle / total_points
 
-    # IO.puts("Valor estimado de PI para #{total_points} foi #{estimated_pi}")
+    finish_time = Time.utc_now()
+    time_execution = Time.diff(finish_time, initial_time, :millisecond)
 
-    send(parent_pid, {:finish, total_points, points_inside_circle, num_actors, estimated_pi})
+    diff_pi = abs(:math.pi - pi)
+
+    csv_string = "#{total_points},#{num_actors},#{points_per_actor},#{points_inside_circle},#{pi},#{:math.pi},#{diff_pi},#{time_execution}\n"
+
+    filename = "results.csv"
+
+    {:ok, file} = File.open(filename, [:append])
+    IO.write(file, csv_string)
+    File.close(file)
+
+    send(estimate_pid, {:finish})
   end
 
-  def receiver(points_inside_circle, count, num_actors, total_points, parent_pid) do
+  def receiver(points_inside_circle, count, points_per_actor, num_actors, total_points, initial_time, estimate_pid) do
     receive do
       {inside_count} ->
-        receiver(points_inside_circle + inside_count, count + 1, num_actors, total_points, parent_pid)
+        receiver(points_inside_circle + inside_count, count + 1, points_per_actor, num_actors, total_points, initial_time, estimate_pid)
     end
   end
 end

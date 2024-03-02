@@ -36,7 +36,7 @@ public class MonteCarlo extends AbstractBehavior<CalculationRequestMessage> {
             if (isInside) isInsideCounter++;
         }
 
-        CalculationResponseMessage responseMessage = new CalculationResponseMessage(isInsideCounter);
+        CalculationResponseMessage responseMessage = new CalculationResponseMessage(isInsideCounter, message.getMainActor());
 
         message.getSender().tell(responseMessage);
 

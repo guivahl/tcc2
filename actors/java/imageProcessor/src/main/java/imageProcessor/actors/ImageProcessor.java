@@ -113,7 +113,10 @@ public class ImageProcessor extends AbstractBehavior<IMessage> {
         
         long timeExecutionMiliseconds = Duration.between(App.startTime, stopTime).toMillis();
 
-        String csvString = String.format("%d,%d,%d,%s\n",
+        int numberActors = this.splitWidth * this.splitHeight;
+
+        String csvString = String.format("%d,%d,%d,%d,%s\n",
+            numberActors,
             this.splitWidth,
             this.splitHeight,
             timeExecutionMiliseconds, 

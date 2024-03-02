@@ -1,13 +1,25 @@
 mvn package -q
 
-for i in {1..20}; do
-    echo "WIDTH: 1 HEIGHT: 1 ITERATION: $i" 
-    java -cp target/imageProcessor-1.0-SNAPSHOT.jar imageProcessor.App 1 1
-done
+ # (width, height)
+dimensions=(
+    "1 1" # 1 actor
+    "2 1" # 2 actor
+    "4 1" # 4 actor
+    "3 2" # 6 actor
+    "4 2" # 8 actor
+    "5 2" # 10 actor
+)
 
-for i in {1..20}; do
-    echo "WIDTH: 5 HEIGHT: 2 ITERATION: $i" 
-    java -cp target/imageProcessor-1.0-SNAPSHOT.jar imageProcessor.App 5 2
+for dim in "${dimensions[@]}"; do
+    width=$(echo "$dim" | cut -d' ' -f1)
+    height=$(echo "$dim" | cut -d' ' -f2)
+    
+    for i in {1..20}; do
+        echo "WIDTH: $width HEIGHT: $height ITERATION: $i"
+        java -cp target/imageProcessor-1.0-SNAPSHOT.jar imageProcessor.App "$width" "$height"
+    done
+
+    sh clean-folders.sh
 done
 
 echo "$SECONDS seconds executing benchmark."
