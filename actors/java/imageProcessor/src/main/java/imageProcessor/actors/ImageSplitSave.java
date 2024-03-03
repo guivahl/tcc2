@@ -33,25 +33,20 @@ public class ImageSplitSave extends AbstractBehavior<SplitAndSaveMessage> {
     }
     
     private Behavior<SplitAndSaveMessage> splitAndSaveImage(SplitAndSaveMessage message) {
-        try {
-            BufferedImage subImage = message
-                .getInputImage()
-                .getSubimage(message.getXStart(), message.getYStart(), message.getChunkWidth(), message.getChunkHeight());
+        BufferedImage subImage = message
+            .getInputImage()
+            .getSubimage(message.getXStart(), message.getYStart(), message.getChunkWidth(), message.getChunkHeight());
 
-            AffineTransform transform = new AffineTransform();
-            transform.rotate(Math.PI, message.getChunkWidth() / 2.0, message.getChunkHeight() / 2.0);
+        AffineTransform transform = new AffineTransform();
+        transform.rotate(Math.PI, message.getChunkWidth() / 2.0, message.getChunkHeight() / 2.0);
 
-            BufferedImage rotatedImage = new BufferedImage(message.getChunkWidth(), message.getChunkHeight(), BufferedImage.TYPE_INT_RGB);
-            Graphics2D g = rotatedImage.createGraphics();
-            g.drawImage(subImage, transform, null);
-            g.dispose();
+        BufferedImage rotatedImage = new BufferedImage(message.getChunkWidth(), message.getChunkHeight(), BufferedImage.TYPE_INT_RGB);
+        Graphics2D g = rotatedImage.createGraphics();
+        g.drawImage(subImage, transform, null);
+        g.dispose();
 
-            File outputFile = new File(message.getOutputPath());
-            ImageIO.write(rotatedImage, "jpg", outputFile);
-        } catch (IOException e) {
-            System.out.println("Error: " + e.getMessage());
-        } 
-        message.getSender().tell(new CountMessage());
+        message.getSender().tell(new CountMessage(message.getSender(), rotatedImage, message.getOrder())); 
+
         return this;
     }
     

@@ -23,9 +23,10 @@ public class App
              totalIterations = Long.parseLong(args[0]);
              numActors = Long.parseLong(args[1]);
         }
+        long pointsPerActor = (long) Math.floor((double)(totalIterations / numActors));
 
         ActorSystem<IMessage> piActor = ActorSystem.create(PIEstimate.start(), "PIActor");
 
-        piActor.tell(new PIMessage(totalIterations, numActors));
+        piActor.tell(new PIMessage(totalIterations, numActors, pointsPerActor));
     }
 }

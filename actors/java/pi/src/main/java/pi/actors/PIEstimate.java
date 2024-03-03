@@ -31,7 +31,7 @@ public class PIEstimate extends AbstractBehavior<IMessage> {
     private Behavior<IMessage> estimate(PIMessage message) {
         this.numActors = message.getNumActors();
         this.totalPoints = message.getTotalPoints();
-        this.pointsPerActor = (long) Math.floor((double)(this.totalPoints / this.numActors));
+        this.pointsPerActor = message.getPointsPerActor();
 
         String receiverActorName = "ReceiverActor";
         ActorRef<IMessage> receiverActor = getContext().spawn(PIReceiver.start(this.numActors, this.totalPoints, this.pointsPerActor), receiverActorName);

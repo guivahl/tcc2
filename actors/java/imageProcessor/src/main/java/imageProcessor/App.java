@@ -18,8 +18,6 @@ public class App
 
     public static void main( String[] args ) throws IOException
     {
-        Files.createDirectories(Paths.get("/tmp"));
-        
         startTime = Instant.now();
 
         String inputPath = "image.png";

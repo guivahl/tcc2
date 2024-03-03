@@ -22,7 +22,6 @@ defmodule ImageProcessor do
       order = ((j - 1)) + ((i - 1) * split_width)
 
       output_filename = "tmp/rotated_#{(i - 1)}_#{(j - 1)}.png"
-      # IO.puts(output_filename)
 
       spawn(ImageProcessor, :split_save, [input_image, order, x_start, y_start, chunk_width, chunk_height, output_filename, counter_pid])
 

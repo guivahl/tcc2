@@ -6,6 +6,7 @@ import akka.actor.typed.ActorRef;
 
 public class SplitAndSaveMessage implements IMessage {
     private BufferedImage inputImage; 
+    private int order;
     private int xStart; 
     private int yStart; 
     private int chunkWidth; 
@@ -15,6 +16,7 @@ public class SplitAndSaveMessage implements IMessage {
 
     public SplitAndSaveMessage(
         BufferedImage inputImage,
+        int order,
         int xStart,
         int yStart,
         int chunkWidth,
@@ -23,6 +25,7 @@ public class SplitAndSaveMessage implements IMessage {
         ActorRef<IMessage> actorRef
     ) {
         this.inputImage = inputImage;
+        this.order = order;
         this.xStart = xStart;
         this.yStart = yStart;
         this.chunkWidth = chunkWidth;
@@ -33,6 +36,10 @@ public class SplitAndSaveMessage implements IMessage {
 
     public BufferedImage getInputImage() {
         return this.inputImage;
+    }
+
+    public int getOrder() {
+        return this.order;
     }
 
     public int getXStart() {

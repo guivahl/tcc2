@@ -1,5 +1,3 @@
-File.mkdir_p!(Path.dirname("tmp"))
-
 initial_time = Time.utc_now()
 
 default_split_width = 4

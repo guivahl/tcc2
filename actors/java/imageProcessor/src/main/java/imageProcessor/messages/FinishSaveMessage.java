@@ -1,7 +1,5 @@
 package imageProcessor.messages;
 
-import imageProcessor.*;
-
 public class FinishSaveMessage implements IMessage {
     private String outputPath;
 

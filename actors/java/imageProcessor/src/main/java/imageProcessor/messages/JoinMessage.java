@@ -1,5 +1,9 @@
 package imageProcessor.messages;
 
+import java.awt.image.BufferedImage;
+import java.util.Map;
+import java.util.TreeMap;
+
 import akka.actor.typed.ActorRef;
 
 public class JoinMessage implements IMessage {
@@ -8,13 +12,15 @@ public class JoinMessage implements IMessage {
     private int height;
     private int splitWidth;
     private int splitHeight;
+    private Map<Integer, BufferedImage> rotatedImages = new TreeMap<Integer, BufferedImage>();
 
-    public JoinMessage(ActorRef<IMessage> sender, int width, int height, int splitWidth, int splitHeight) {
+    public JoinMessage(ActorRef<IMessage> sender, int width, int height, int splitWidth, int splitHeight, Map<Integer, BufferedImage> rotatedImages) {
         this.sender = sender;
         this.width = width;
         this.height = height;
         this.splitWidth = splitWidth;
         this.splitHeight = splitHeight;
+        this.rotatedImages = rotatedImages;
     }
 
     public ActorRef<IMessage> getSender() {
@@ -35,5 +41,9 @@ public class JoinMessage implements IMessage {
 
     public int getSplitHeight() {
         return this.splitHeight;
+    }
+    
+    public Map<Integer, BufferedImage> getRotatedImages() {
+        return this.rotatedImages;
     }
 }
