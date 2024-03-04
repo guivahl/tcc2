@@ -84,7 +84,7 @@ public class ImageJoin extends AbstractBehavior<JoinMessage> {
             this.splitWidth,
             this.splitHeight,
             timeExecutionMiliseconds, 
-                outputPath
+            outputPath
         );
         
         try{
@@ -93,10 +93,8 @@ public class ImageJoin extends AbstractBehavior<JoinMessage> {
         } catch(Exception ex) {
             System.out.println("Erro ao escrever resultados no csv");
         }
-
-        FinishSaveMessage responseMessage = new FinishSaveMessage(outputPath);
-
-        message.getSender().tell(responseMessage);
+        
+        message.getSender().tell(new FinishSaveMessage());
 
         return this;
     }

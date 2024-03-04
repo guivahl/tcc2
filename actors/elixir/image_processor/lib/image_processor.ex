@@ -14,17 +14,13 @@ defmodule ImageProcessor do
     chunk_width = div(input_width, split_width)
     chunk_height = div(input_height, split_height)
 
-
     for i <- 1..(split_height), j <- 1..(split_width) do
       x_start = (j - 1) * chunk_width
       y_start = (i - 1) * chunk_height
 
       order = ((j - 1)) + ((i - 1) * split_width)
 
-      output_filename = "tmp/rotated_#{(i - 1)}_#{(j - 1)}.png"
-
-      spawn(ImageProcessor, :split_save, [input_image, order, x_start, y_start, chunk_width, chunk_height, output_filename, counter_pid])
-
+      spawn(ImageProcessor, :split_save, [input_image, order, x_start, y_start, chunk_width, chunk_height, counter_pid])
     end
 
     receive do
@@ -32,16 +28,12 @@ defmodule ImageProcessor do
     end
   end
 
-  def split_save(input_image, order, x_start, y_start, chunk_width, chunk_height, output_filename, counter_pid) do
-
+  def split_save(input_image, order, x_start, y_start, chunk_width, chunk_height, counter_pid) do
     piece = Image.crop!(input_image, x_start, y_start, chunk_width, chunk_height)
 
     rotated_piece = Image.rotate!(piece, 180.0)
 
-    with {:ok,_} <- Image.write(rotated_piece, output_filename) do
-
-      send(counter_pid, {:count, {order, rotated_piece}})
-    end
+    send(counter_pid, {:count, {order, rotated_piece}})
   end
 
   def counter(count, max, images, split_width, split_height, initial_time, parent_pid) when count == max do
